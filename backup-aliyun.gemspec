@@ -3,7 +3,7 @@ $:.push File.expand_path("../lib", __FILE__)
 
 Gem::Specification.new do |s|
   s.name          = "backup-aliyun"
-  s.version       = "0.1.0"
+  s.version       = "0.1.1"
   s.platform      = Gem::Platform::RUBY
   s.authors       = ["Jason Lee"]
   s.email         = ["huacnlee@gmail.com"]
@@ -17,5 +17,5 @@ Gem::Specification.new do |s|
   s.license       = 'MIT'
 
   s.add_dependency "backup", ">= 3.7.0"
-  s.add_dependency "carrierwave-aliyun", ["~> 0.2.0"]
+  s.add_dependency "carrierwave-aliyun", ["~> 0.2.1"]
 end

@@ -35,7 +35,7 @@ module Backup
           dest = File.join(remote_path, filename)
           Logger.info "#{storage_name} uploading '#{ dest }'..."
           File.open(src, 'r') do |file|
-            connection.put(dest, file.read)
+            connection.put(dest, file)
           end
         end
       end

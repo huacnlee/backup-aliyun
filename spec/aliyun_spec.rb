@@ -128,7 +128,7 @@ describe Backup::Storage::Aliyun do
         File.join('/local/path', 'backup.tar.enc-aa'), 'r'
       ).yields(file)
       connection.expects(:put).in_sequence(s).with(
-        File.join('remote/path', 'backup.tar.enc-aa'), file.read
+        File.join('remote/path', 'backup.tar.enc-aa'), file
       )
       # second yield
       Backup::Logger.expects(:info).in_sequence(s).with(
@@ -138,7 +138,7 @@ describe Backup::Storage::Aliyun do
         File.join('/local/path', 'backup.tar.enc-ab'), 'r'
       ).yields(file)
       connection.expects(:put).in_sequence(s).with(
-        File.join('remote/path', 'backup.tar.enc-ab'), file.read
+        File.join('remote/path', 'backup.tar.enc-ab'), file
       )
 
       storage.send(:transfer!)
