@@ -18,8 +18,8 @@ require "backup-aliyun" # 引用 backup-aliyun
 
 Backup::Model.new(:foo, 'Description for foo') do
 
-  # 配置阿里云 OSS 作为备份存储方式
-  store_with Aliyun do |aliyun|
+  # 配置阿里云 OSS 作为备份存储方式, 注意，Aliyun 这个地方一定要打引号
+  store_with "Aliyun" do |aliyun|
     aliyun.access_key_id = 'my_access_id'
     aliyun.access_key_secret = 'my_access_key'
     aliyun.bucket = 'bucket-name'
