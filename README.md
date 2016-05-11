@@ -2,6 +2,8 @@
 
 此 Gem 是 [Backup](https://github.com/meskyanichi/backup) 的辅助插件，目的是让 Backup 支持存储到 [Aliyun OSS](http://oss.aliyun.com)。
 
+[![Build Status](https://travis-ci.org/huacnlee/backup-aliyun.svg?branch=master)](https://travis-ci.org/huacnlee/backup-aliyun)
+
 ## 安装
 
 ```bash
