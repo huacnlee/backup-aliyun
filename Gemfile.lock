@@ -218,6 +218,7 @@ GEM
     pagerduty (2.0.0)
       json (>= 1.7.7)
     polyglot (0.3.3)
+    rake (11.1.2)
     rspec (2.14.1)
       rspec-core (~> 2.14.0)
       rspec-expectations (~> 2.14.0)
@@ -255,6 +256,7 @@ PLATFORMS
 DEPENDENCIES
   backup-aliyun!
   mocha
+  rake
   rspec
 
 BUNDLED WITH
