@@ -6,10 +6,11 @@ describe Backup::Storage::Aliyun do
   let(:model)   { Backup::Model.new(:test_trigger, 'test label') }
   let(:storage) do
     Backup::Storage::Aliyun.new(model) do |db|
-      db.access_key_id      = 'my_access_id'
-      db.access_key_secret   = 'my_access_key'
-      db.bucket       = 'foo'
-      db.keep         = 5
+      db.access_key_id       = ENV['ALIYUN_ACCESS_ID'] || 'my_access_id'
+      db.access_key_secret   = ENV['ALIYUN_ACCESS_KEY'] || '123456'
+      db.bucket              = ENV['ALIYUN_BUCKET'] || 'carrierwave-aliyun-test'
+      db.area                = ENV['ALIYUN_AREA'] || 'cn-hangzhou'
+      db.keep                = 5
     end
   end
 
@@ -37,9 +38,10 @@ describe Backup::Storage::Aliyun do
 
     context 'when no pre-configured defaults have been set' do
       it 'should use the values given' do
-        storage.access_key_id.should      == 'my_access_id'
-        storage.access_key_secret.should   == 'my_access_key'
-        storage.bucket.should  == "foo"
+        storage.access_key_id.should      == ENV['ALIYUN_ACCESS_ID'] || 'my_access_id'
+        storage.access_key_secret.should   == ENV['ALIYUN_ACCESS_KEY'] || '123456'
+        storage.bucket.should  == ENV['ALIYUN_BUCKET'] || 'carrierwave-aliyun-test'
+        storage.area.should  == ENV['ALIYUN_AREA'] || 'cn-hangzhou'
         storage.path.should         == 'backups'
 
         storage.storage_id.should be_nil
@@ -51,7 +53,8 @@ describe Backup::Storage::Aliyun do
         storage.access_key_id.should      be_nil
         storage.access_key_secret.should   be_nil
         storage.bucket.should       be_nil
-        storage.path.should         == 'backups'
+        storage.area.should == 'cn-hangzhou'
+        storage.path.should == 'backups'
 
         storage.storage_id.should be_nil
         storage.keep.should       be_nil
@@ -102,7 +105,7 @@ describe Backup::Storage::Aliyun do
   end # describe '#initialize'
 
   describe '#transfer!' do
-    let(:connection) { mock }
+    let(:client) { mock }
     let(:package) { mock }
     let(:file) { mock }
     let(:s) { sequence '' }
@@ -111,12 +114,12 @@ describe Backup::Storage::Aliyun do
       storage.instance_variable_set(:@package, package)
       storage.stubs(:storage_name).returns('Storage::Aliyun')
       Backup::Config.stubs(:tmp_path).returns('/local/path')
-      storage.stubs(:connection).returns(connection)
+      storage.stubs(:client).returns(client)
       file.stubs(:read).returns("foo")
     end
 
     it 'should transfer the package files' do
-      
+
       storage.expects(:remote_path_for).in_sequence(s).with(package).
           returns('remote/path')
       package.stubs(:filenames).returns(["backup.tar.enc-aa","backup.tar.enc-ab"])
@@ -127,8 +130,8 @@ describe Backup::Storage::Aliyun do
       File.expects(:open).in_sequence(s).with(
         File.join('/local/path', 'backup.tar.enc-aa'), 'r'
       ).yields(file)
-      connection.expects(:put).in_sequence(s).with(
-        File.join('remote/path', 'backup.tar.enc-aa'), file
+      client.expects(:bucket_create_object).in_sequence(s).with(
+        File.join('remote/path', 'backup.tar.enc-aa'), file, {}
       )
       # second yield
       Backup::Logger.expects(:info).in_sequence(s).with(
@@ -137,8 +140,8 @@ describe Backup::Storage::Aliyun do
       File.expects(:open).in_sequence(s).with(
         File.join('/local/path', 'backup.tar.enc-ab'), 'r'
       ).yields(file)
-      connection.expects(:put).in_sequence(s).with(
-        File.join('remote/path', 'backup.tar.enc-ab'), file
+      client.expects(:bucket_create_object).in_sequence(s).with(
+        File.join('remote/path', 'backup.tar.enc-ab'), file, {}
       )
 
       storage.send(:transfer!)
@@ -147,12 +150,12 @@ describe Backup::Storage::Aliyun do
 
   describe '#remove!' do
     let(:package) { mock }
-    let(:connection) { mock }
+    let(:client) { mock }
     let(:s) { sequence '' }
 
     before do
       storage.stubs(:storage_name).returns('Storage::Aliyun')
-      storage.stubs(:connection).returns(connection)
+      storage.stubs(:client).returns(client)
     end
 
     it 'should remove the package files' do
@@ -162,7 +165,7 @@ describe Backup::Storage::Aliyun do
       Backup::Logger.expects(:info).in_sequence(s).with(
         "Storage::Aliyun removing 'remote/path'..."
       )
-      connection.expects(:delete).in_sequence(s).with('remote/path')
+      client.expects(:bucket_delete_object).in_sequence(s).with('remote/path')
 
       storage.send(:remove!, package)
     end
