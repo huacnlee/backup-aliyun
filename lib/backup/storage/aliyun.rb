@@ -3,6 +3,8 @@ require 'aliyun/oss'
 module Backup
   module Storage
     class Aliyun < Base
+      include Storage::Cycler
+
       attr_accessor :bucket, :area, :access_key_id, :access_key_secret, :path
 
       def initialize(model, storage_id = nil, &block)
