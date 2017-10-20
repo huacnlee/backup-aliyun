@@ -2,6 +2,8 @@
 
 此 Gem 是 [Backup](https://github.com/meskyanichi/backup) 的辅助插件，目的是让 Backup 支持存储到 [Aliyun OSS](http://oss.aliyun.com)。
 
+> 此项目不再维护，推荐我用 Go 写的 backup 替代工具 gobackup，内置 OSS 存储方式 https://github.com/huacnlee/gobackup
+
 [![Build Status](https://travis-ci.org/huacnlee/backup-aliyun.svg?branch=master)](https://travis-ci.org/huacnlee/backup-aliyun)
 
 ## 安装
